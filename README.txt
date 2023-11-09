@@ -5,3 +5,5 @@ studio does not seem to like these programs.
 The program stegoRead.c will read information that was embedded 
 in an image file use the program stego.c.
 
+[Nick Newhard] 
+I am using JetBrains CLion and had no  problems after tweaking the makefile. 
