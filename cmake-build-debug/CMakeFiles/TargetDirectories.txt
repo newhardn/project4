@@ -1,4 +1,5 @@
 D:/proj/CS430/project4/cmake-build-debug/CMakeFiles/stego.dir
 D:/proj/CS430/project4/cmake-build-debug/CMakeFiles/stegoRead.dir
+D:/proj/CS430/project4/cmake-build-debug/CMakeFiles/stegoDestroy.dir
 D:/proj/CS430/project4/cmake-build-debug/CMakeFiles/edit_cache.dir
 D:/proj/CS430/project4/cmake-build-debug/CMakeFiles/rebuild_cache.dir

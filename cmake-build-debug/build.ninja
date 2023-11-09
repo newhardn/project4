@@ -106,6 +106,39 @@ build stegoRead.exe: C_EXECUTABLE_LINKER__stegoRead_Debug CMakeFiles/stegoRead.d
   TARGET_IMPLIB = libstegoRead.dll.a
   TARGET_PDB = stegoRead.exe.dbg
 
+# =============================================================================
+# Object build statements for EXECUTABLE target stegoDestroy
+
+
+#############################################
+# Order-only phony target for stegoDestroy
+
+build cmake_object_order_depends_target_stegoDestroy: phony || CMakeFiles/stegoDestroy.dir
+
+build CMakeFiles/stegoDestroy.dir/stegoDestroy.c.obj: C_COMPILER__stegoDestroy_Debug D$:/proj/CS430/project4/stegoDestroy.c || cmake_object_order_depends_target_stegoDestroy
+  DEP_FILE = CMakeFiles\stegoDestroy.dir\stegoDestroy.c.obj.d
+  FLAGS = -g -std=gnu99
+  OBJECT_DIR = CMakeFiles\stegoDestroy.dir
+  OBJECT_FILE_DIR = CMakeFiles\stegoDestroy.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target stegoDestroy
+
+
+#############################################
+# Link the executable stegoDestroy.exe
+
+build stegoDestroy.exe: C_EXECUTABLE_LINKER__stegoDestroy_Debug CMakeFiles/stegoDestroy.dir/stegoDestroy.c.obj
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\stegoDestroy.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = stegoDestroy.exe
+  TARGET_IMPLIB = libstegoDestroy.dll.a
+  TARGET_PDB = stegoDestroy.exe.dbg
+
 
 #############################################
 # Utility command for edit_cache
@@ -134,6 +167,8 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 
 build stego: phony stego.exe
 
+build stegoDestroy: phony stegoDestroy.exe
+
 build stegoRead: phony stegoRead.exe
 
 # =============================================================================
@@ -144,7 +179,7 @@ build stegoRead: phony stegoRead.exe
 #############################################
 # Folder: D:/proj/CS430/project4/cmake-build-debug
 
-build all: phony stego.exe stegoRead.exe
+build all: phony stego.exe stegoRead.exe stegoDestroy.exe
 
 # =============================================================================
 # Built-in targets
