@@ -5,6 +5,7 @@ set(CMAKE_C_STANDARD 99)
 
 add_executable(stego stego.c)
 add_executable(stegoRead stegoRead.c)
+add_executable(stegoDestroy stegoDestroy.c)
 
 set(project_bitmaps
     alice.bmp
