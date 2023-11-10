@@ -26,6 +26,9 @@ FILE * FileAtomOpen(const char *restrict filename, const char *restrict mode, fi
         exit(0);
     }
 
+    memset(fa,0,sizeof(fileAtom));
+    strcpy(fa->fname,filename);
+
     // open the file specified by filename, retrieving the file pointer
     FILE *fp = fopen(fa->fname, mode);
 
@@ -103,12 +106,11 @@ int destroyStego(fileAtom * faIn, fileAtom * faOut) {
 
     // creating marker and source arrays
     // todo: consider writing out the destination file even if it does not contain stego
-    char marker[8];
-    char source[8];
+    char marker[8], source[8];
 
     // read 8 bytes (64 bits) of the file -- this is only a potential marker
     x = fread(marker, sizeof(char), 8, faIn->fp);
-    if (x != 1) {
+    if (x != 8) {
         fprintf(stderr, "\nError in file %s\n\n", faIn->fname);
         FileAtomClose(faIn);
         FileAtomClose(faOut);
@@ -118,6 +120,7 @@ int destroyStego(fileAtom * faIn, fileAtom * faOut) {
     // copy marker to source, intending to replace source IF data contains a stego marker
     memcpy(source, marker, 8);
 
+    //todo: this is where it currently fails to find the marker
     // process the data and look for stego marker
     for (i = 0; i < 8; ++i) {
         ttt = 0x0;
@@ -160,11 +163,39 @@ int destroyStego(fileAtom * faIn, fileAtom * faOut) {
         // write the restored byte to output file
         fprintf(faOut->fp, "%c", temp);
     }
-    printf("dataBytes = %d\n", dataBytes);
+    printf("dataBytes detected = %d\n", dataBytes);
 
-    // ...
+    // read dataBytes characters, restoring their original value by removing stego data, then writing to output file
+    data = 0;
+    shft = 0;
+    dataBytesWritten = 0;
+    for(i = 0; i < (dataBytes << 3); ++i)
+    {
+        x = fscanf(faIn->fp, "%c", &temp);
+        if (x != 1)
+        {
+            fprintf(stderr, "\nError in file %s\n\n", faIn->fname);
+            exit(0);
+        }
 
+//        printf("bit %d = %d\n", shft, temp & 0x1);
 
+        data = data ^ ((temp & 0x1) << shft);
+        ++shft;
+        if (shft == 8)
+        {
+//            printf("data = %c\n", data);
+
+            fprintf(faOut->fp, "%c", data);
+            ++dataBytesWritten;
+            data = 0;
+            shft = 0;
+
+        }// end if
+
+    }// next i
+
+    return dataBytesWritten;
 }
 
 
@@ -179,10 +210,11 @@ int main(int argc, const char *argv[]) {
     int bytesWritten = 0;
 
     // validate number of arguments
-    if(argc != 2)
+    if(argc != 3)
     {
-oops:   fprintf(stderr, "\nUsage: %s stegoImage\n\n", argv[0]);
+oops:   fprintf(stderr, "\nUsage: %s stegoImage outImage\n\n", argv[0]);
         fprintf(stderr, "Where stegoImage == filename for image containing stego data to be removed\n\n");
+        fprintf(stderr, "      outImage == data restored from stegoImage file\n\n");
         exit(0);
     }
 
