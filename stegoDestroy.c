@@ -81,8 +81,8 @@ int destroyStego(fileAtom * faIn, fileAtom * faOut) {
         moreImage,
         imageBytes,
         dataBytes,
-        dataBytesWritten,
-        imageBytesWritten;
+        imageBytesWritten,
+        dataBytesWritten;
 
     char temp,
          data;
@@ -104,44 +104,42 @@ int destroyStego(fileAtom * faIn, fileAtom * faOut) {
         ++imageBytesWritten;
     }
 
-    // creating marker and source arrays
-    // todo: consider writing out the destination file even if it does not contain stego
-    char marker[8], source[8];
-
-    // read 8 bytes (64 bits) of the file -- this is only a potential marker
-    x = fread(marker, sizeof(char), 8, faIn->fp);
-    if (x != 8) {
-        fprintf(stderr, "\nError in file %s\n\n", faIn->fname);
-        FileAtomClose(faIn);
-        FileAtomClose(faOut);
-        exit(1);
-    }
-
-    // copy marker to source, intending to replace source IF data contains a stego marker
-    memcpy(source, marker, 8);
-
-    //todo: this is where it currently fails to find the marker
-    // process the data and look for stego marker
+    char stego[64];
+    // loop to check for stego marker
     for (i = 0; i < 8; ++i) {
         ttt = 0x0;
-
-        temp = marker[i]; // grab byte from marker[i]
         for (j = 0; j < 8; ++j) {
+            x = fscanf(faIn->fp, "%c", &temp);
+            if (x != 1) {
+                fprintf(stderr, "\nError in file %s\n\n", faIn->fname);
+                exit(0);
+            }
             ttt ^= ((temp & 0x1) << j);
+            stego[i * 8 + j] = temp; // store the original stego-altered data in an array
         }
-
-        // remove stego marker indicators
-        source[i] = (temp & 0xfe) ^ ((~(ttt ^ 0xa5) & 0x1));
     }
 
-    // if not of the form 0xa5, then file does not contain stego data
+    // if not 0xa5, then file does not contain stego data
     if(ttt != 0xa5) {
         fprintf(stderr, "\nError --- file does not contain stego data that I can read\n\n");
         exit(0);
     }
 
-    // Write the modified source data to the output file
-    fwrite(source, sizeof(char), 8, faOut->fp);
+    // second pass to restore the original LSB values
+    for (i = 0; i < 8; ++i) {
+        ttt = 0x0;
+        for (j = 0; j < 8; ++j) {
+            temp = stego[i * 8 + j]; // Retrieve byte from the array
+            ttt ^= ((temp & 0x1) << j);
+
+            // Restore the original LSB of temp by XOR-ing it with the stego bit
+            temp ^= ((ttt >> i) & 0x1);
+
+            // Write the restored byte to the output file
+            fprintf(faOut->fp, "%c", temp);
+            ++imageBytesWritten;
+        }
+    }
 
     // Strip out the databytes value (27 bits across 27 bytes)
     dataBytes = 0;
@@ -162,40 +160,46 @@ int destroyStego(fileAtom * faIn, fileAtom * faOut) {
 
         // write the restored byte to output file
         fprintf(faOut->fp, "%c", temp);
+        ++imageBytesWritten;
     }
     printf("dataBytes detected = %d\n", dataBytes);
 
-    // read dataBytes characters, restoring their original value by removing stego data, then writing to output file
-    data = 0;
-    shft = 0;
-    dataBytesWritten = 0;
-    for(i = 0; i < (dataBytes << 3); ++i)
-    {
-        x = fscanf(faIn->fp, "%c", &temp);
-        if (x != 1)
-        {
-            fprintf(stderr, "\nError in file %s\n\n", faIn->fname);
-            exit(0);
+    for (i = 0; i < dataBytes; ++i) {
+        char bitmapData[8];
+
+        // Read 8 bits of bytewise stego data into bitmapData
+        for (j = 0; j < 8; ++j) {
+            x = fscanf(faIn->fp, "%c", &bitmapData[j]);
+            if (x != 1) {
+                fprintf(stderr, "\nError in file %s\n\n", faIn->fname);
+                exit(0);
+            }
         }
 
-//        printf("bit %d = %d\n", shft, temp & 0x1);
+        // assemble the 8 bits into a stego data byte
+        char stegoByte = 0;
+        for (j = 0; j < 8; ++j) {
+            stegoByte |= ((bitmapData[j] & 0x1) << j);
+        }
 
-        data = data ^ ((temp & 0x1) << shft);
-        ++shft;
-        if (shft == 8)
-        {
-//            printf("data = %c\n", data);
+        // loop to remove the stego by applying the shifted bits from the stego data byte
+        for (j = 0; j < 8; ++j) {
+            // remove the stego bit by XOR-ing it again
+            temp = bitmapData[j] ^ ((stegoByte >> j) & 0x1);
 
-            fprintf(faOut->fp, "%c", data);
-            ++dataBytesWritten;
-            data = 0;
-            shft = 0;
+            // write the corrected byte of the bitmap to the output file
+            fprintf(faOut->fp, "%c", temp);
+            ++imageBytesWritten;
+        }
+    }
 
-        }// end if
+    // read and write remaining data from the input file to the output file
+    while (fscanf(faIn->fp, "%c", &temp) == 1) {
+        fprintf(faOut->fp, "%c", temp);
+        ++imageBytesWritten;
+    }
 
-    }// next i
-
-    return dataBytesWritten;
+    return imageBytesWritten;
 }
 
 
@@ -242,10 +246,10 @@ oops:   fprintf(stderr, "\nUsage: %s stegoImage outImage\n\n", argv[0]);
     }
 
     // destroy stego data by reading the input file and writing a clean output file; returns data written size in bytes
-    bytesWritten = destroyStego(&fileAtomIn, &fileAtomOut);
+    int imageBytesWritten = destroyStego(&fileAtomIn, &fileAtomOut);
 
     // print status
-    printf("\ndata bytes written = %d\n\n", bytesWritten);
+    printf("\nimage bytes written = %d\n\n", imageBytesWritten);
     printf("\n");
 
     // close files and exit
