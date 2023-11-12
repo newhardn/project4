@@ -35,7 +35,7 @@ FILE * FileAtomOpen(const char *restrict filename, const char *restrict mode, fi
     // looks good, fill the atom
     if (fp != NULL) {
         fa->fp = fp;
-        sprintf(fa->fname, filename);
+        sprintf(fa->fname, "%s", filename);
     }
 
     return fp;
@@ -71,21 +71,22 @@ int destroyStego(fileAtom * faIn, fileAtom * faOut) {
         exit(0);
     }
 
+    unsigned char ttt;
     int i,
         j,
         x,
-        ttt,
-        shft,
-        byteCount,
-        moreData,
-        moreImage,
-        imageBytes,
+        //ttt,
+        //shft,
+        //byteCount,
+        //moreData,
+        //moreImage,
+        //imageBytes,
         dataBytes,
-        imageBytesWritten,
-        dataBytesWritten;
+        imageBytesWritten;
+        //dataBytesWritten;
 
-    char temp,
-         data;
+    unsigned char temp;
+         //data;
 
     //
     // Skip first START_FROM bytes of image file
@@ -104,7 +105,7 @@ int destroyStego(fileAtom * faIn, fileAtom * faOut) {
         ++imageBytesWritten;
     }
 
-    char stego[64];
+    unsigned char stego[64];
     // loop to check for stego marker
     for (i = 0; i < 8; ++i) {
         ttt = 0x0;
@@ -177,7 +178,7 @@ int destroyStego(fileAtom * faIn, fileAtom * faOut) {
         }
 
         // assemble the 8 bits into a stego data byte
-        char stegoByte = 0;
+        unsigned char stegoByte = 0;
         for (j = 0; j < 8; ++j) {
             stegoByte |= ((bitmapData[j] & 0x1) << j);
         }
@@ -211,20 +212,20 @@ int main(int argc, const char *argv[]) {
 
     FILE *fin, *fout;
 
-    int bytesWritten = 0;
+    //int bytesWritten = 0;
 
     // validate number of arguments
     if(argc != 3)
     {
-oops:   fprintf(stderr, "\nUsage: %s stegoImage outImage\n\n", argv[0]);
+        fprintf(stderr, "\nUsage: %s stegoImage outImage\n\n", argv[0]);
         fprintf(stderr, "Where stegoImage == filename for image containing stego data to be removed\n\n");
         fprintf(stderr, "      outImage == data restored from stegoImage file\n\n");
         exit(0);
     }
 
     // grab input and output filenames
-    sprintf(fnameIn, argv[1]);
-    sprintf(fnameOut, argv[2]);
+    sprintf(fnameIn, "%s", argv[1]);
+    sprintf(fnameOut, "%s", argv[2]);
 
     // use fileAtoms for managing file data
     fileAtom fileAtomIn, fileAtomOut;
