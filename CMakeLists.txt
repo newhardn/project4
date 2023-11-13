@@ -3,9 +3,9 @@ project(project4 C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(stego stego.c)
-add_executable(stegoRead stegoRead.c)
-add_executable(stegoDestroy stegoDestroy.c)
+add_executable(stego stego.c stego.h)
+add_executable(stegoRead stegoRead.c stego.h)
+add_executable(stegoDestroy stegoDestroy.c stego.h)
 
 set(project_bitmaps
     alice.bmp

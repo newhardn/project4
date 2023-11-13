@@ -1,11 +1,16 @@
 # ninja log v5
-0	9	0	clean	ec0400d030232576
-11	65	7212627029561824	CMakeFiles/project4.dir/main.c.obj	2208c7dc51fb7bc7
-0	145	7212649589933043	build.ninja	17493622ad1da3a2
-1	91	7212625094537993	CMakeFiles/project4.dir/stego.c.obj	85a79fb8baf52afd
-81	170	7212647821567754	stego.exe	832e48e33894805a
-6	86	7212647820657151	CMakeFiles/stegoRead.dir/stegoRead.c.obj	34e3258fbf0dbe7
-1	81	7212647820647107	CMakeFiles/stego.dir/stego.c.obj	2aee68d75edccc6a
-86	174	7212647821607743	stegoRead.exe	60d3ddbfb954fc02
-10	74	7212647820637417	CMakeFiles/stegoDestroy.dir/stegoDestroy.c.obj	39cce367f6094421
-74	160	7212647821467754	stegoDestroy.exe	faab5198f4c53a47
+0	25	0	clean	79b7250df23e8e8b
+0	145	7215401198159981	build.ninja	17493622ad1da3a2
+91	178	7214675488181022	stego.exe	832e48e33894805a
+7	84	7214675487262330	CMakeFiles/stegoRead.dir/stegoRead.c.obj	fc88ba0b10b19e7a
+2	82	7214679277373180	CMakeFiles/stegoDestroy.dir/stegoDestroy.c.obj	2dfc68d151cbc34e
+2	90	7214675487282305	CMakeFiles/stego.dir/stego.c.obj	841ceda7e4ecd551
+83	174	7214679278258303	stegoDestroy.exe	faab5198f4c53a47
+85	176	7214675488161026	stegoRead.exe	60d3ddbfb954fc02
+0	7	0	clean	79b7250df23e8e8b
+6	128	7215401207768874	CMakeFiles/stegoRead.dir/stegoRead.c.obj	fc88ba0b10b19e7a
+9	133	7215401207768874	CMakeFiles/stegoDestroy.dir/stegoDestroy.c.obj	2dfc68d151cbc34e
+2	139	7215401207843967	CMakeFiles/stego.dir/stego.c.obj	841ceda7e4ecd551
+128	351	7215401209941298	stegoRead.exe	60d3ddbfb954fc02
+134	351	7215401209941298	stegoDestroy.exe	faab5198f4c53a47
+139	351	7215401209951244	stego.exe	832e48e33894805a

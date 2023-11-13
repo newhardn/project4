@@ -146,20 +146,23 @@ oops:   fprintf(stderr, "\nUsage: %s plainImage stegoImage stegoData\n\n", argv[
     }
 
     //
-    // insert 64 bits of the form 0xa5
-    // to indicate that the file contains stego data
+    // insert 64 bits of the form 0xa5 to indicate that the file contains stego data
+    // this is creating a stego "marker"
     //
+
+    // Initialize ttt with the hex value 0xa5 (10100101 in binary)
     ttt = 0xa5;
-    for(i = 0; i < 8; ++i)
+    for(i = 0; i < 8; ++i)      // 8 bytes
     {
-        for(j = 0; j < 8; ++j)
+        for(j = 0; j < 8; ++j)  // 8 bits per byte
         {
-            x = fscanf(in, "%c", &temp);
-            if(x != 1)
+            x = fscanf(in, "%c", &temp);    // read a char from input file
+            if (x != 1)
             {
                 fprintf(stderr, "\nError in file %s\n\n", infname);
                 exit(0);
             }
+            // Change the LSB of temp char to match the current j-th bit of ttt and write it
             temp = (temp & 0xfe) ^ ((ttt >> j) & 0x1);
             fprintf(out, "%c", temp);
             ++imageBytesWritten;

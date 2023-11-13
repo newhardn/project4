@@ -8,11 +8,12 @@ int main(int argc, const char *argv[])
 {
     FILE *in,
          *outdata;
-    
+
+    unsigned char ttt;
     int i,
         j,
         x,
-        ttt,
+        //ttt,
         shft,
         dataBytes,
         dataBytesWritten;
@@ -64,7 +65,7 @@ oops:   fprintf(stderr, "\nUsage: %s stegoImage outData\n\n", argv[0]);
     //
     // read 64 bits of the file
     // if not of the form 0xa5, then
-    // file does not contains stego data
+    // file does not contain stego data
     //
     for(i = 0; i < 8; ++i)
     {
